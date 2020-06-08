@@ -86,7 +86,9 @@
         <tr>
           <th>Birim Adı</th>
           <th>Miktar</th>
-          <th>Kar</th>
+          <th>Kar Yüzde</th>
+          <th>Kar Tutar</th>
+          <th>Toplam Tutar</th>
         </tr>
       </thead>
 
@@ -226,16 +228,22 @@
                 if(searchResult==-1){
                   console.log('DATA YENİ')
                   gain=0;
-                  accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate,'gain': gain});
+                  accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate.toPrecision(8),'gain': gain});
                   accountUpdate('new',inCoin,parseInt(inPiece),rate,0);
 
                 }else if (searchResult>=0){
                         console.log('DATA GUNCELLENDİ')
                         
+                 
+
+
                         accountState[searchResult]['inPiece']+=inPiece;
-                        console.log("testtt "+accountState[searchResult]['inPiece']);
-                        accountState[searchResult]['rate']=rate;
-                        accountState[searchResult]['gain']+=gain;
+
+                        accountState[searchResult]['rate']=rate.toPrecision(8);
+              
+                  
+
+                        //accountState[searchResult]['gain']=x;
                         accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
 
                 }
@@ -244,9 +252,15 @@
 
             var searchResult = accountState.findIndex(s=> s.inCoin == inCoin);
                 //satış güncellem
-                accountState[searchResult]['inPiece']-=inPiece;
-                accountState[searchResult]['gain']=gain;
-                accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
+
+            var x = accountState[searchResult]['rate']*accountState[searchResult]['inPieces'];
+
+                    accountState[searchResult]['inPiece']-=inPiece;
+            var y = rate.toPrecision(8)*inPiece-x;  
+            var z = getGain(x,y);
+                   console.log(z);
+                    accountState[searchResult]['gain']=z;
+                    accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
 
               }
 
