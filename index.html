@@ -229,22 +229,25 @@
                   console.log('DATA YENİ')
                   gain=0;
                   accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate.toPrecision(8),'gain': gain});
-                  accountUpdate('new',inCoin,parseInt(inPiece),rate,0);
-
+                  accountUpdate('new',inCoin,parseInt(inPiece),0,0,rate*inPiece);
+                    
                 }else if (searchResult>=0){
                         console.log('DATA GUNCELLENDİ')
                         
-                 
-
+                    var x = accountState[searchResult]['rate']*accountState[searchResult]['inPieces'];
+                    
 
                         accountState[searchResult]['inPiece']+=inPiece;
-
-                        accountState[searchResult]['rate']=rate.toPrecision(8);
+                    var y = (rate*accountState[searchResult]['inPiece'])-x;  
+                    var z = getGain(parseInt(x),parseInt(y));
+                        console.log(z);
+                        accountState[searchResult]['gain']=z;
+                        accountState[searchResult]['rate']=rate;
               
                   
-
+                        //(state,inCoin,inPiece,gainPercent,gainMoney,totalMoney)
                         //accountState[searchResult]['gain']=x;
-                        accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
+                        accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['gain'],y,rate*accountState[searchResult]['inPiece']);
 
                 }
 
@@ -256,24 +259,25 @@
             var x = accountState[searchResult]['rate']*accountState[searchResult]['inPieces'];
 
                     accountState[searchResult]['inPiece']-=inPiece;
-            var y = rate.toPrecision(8)*inPiece-x;  
-            var z = getGain(x,y);
+            var y = (rate*accountState[searchResult]['inPiece'])-x;  
+            var z = getGain(parseInt(x),parseInt(y));
                    console.log(z);
                     accountState[searchResult]['gain']=z;
-                    accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
+                    accountState[searchResult]['rate']=rate;
+                    accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['gain'],y,rate*accountState[searchResult]['inPiece']);
 
               }
 
 
       }
-      function accountUpdate(state,inCoin,inPiece,rate,gain){
+      function accountUpdate(state,inCoin,inPiece,gainPercent,gainMoney,totalMoney){
         if (state=='new'){
           var x = "ac"+inCoin;
-          document.getElementById('account').innerHTML+="<tr  id='"+x+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
+          document.getElementById('account').innerHTML+="<tr  id='"+x+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gainPercent + "</td><td>" + gainMoney + "</td><td>" + totalMoney + "</td></tr>";
 
         } else if (state=='up'){
           
-          document.getElementById("ac"+inCoin).innerHTML="<td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td>";
+          document.getElementById("ac"+inCoin).innerHTML="<td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gainPercent + "</td><td>" + gainMoney + "</td><td>" + totalMoney + "</td>";
 
         }
 
