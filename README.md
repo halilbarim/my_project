@@ -1,9 +1,9 @@
 # my_project
 my praction projects
-API işleme ödevi proxo
-0.Server: OK - CANCELLED
+#API işleme ödevi proxo >
+#0.Server: ok - CANCELLED >
 
-1.HTML ve CSS: OK
+#1.HTML ve CSS: OK > 
 
 	div işlem >  
 				input OK
@@ -18,14 +18,14 @@ API işleme ödevi proxo
 
 
 
-2.API import: OK
+#2.API import: OK >
 				json data ok 
 				coin data ok
 
 
 
 
-3.script:OK
+#3.script:OK >
 				data get ok
 				data set ok
 			
@@ -36,12 +36,12 @@ API işleme ödevi proxo
 				sale ok
 				buy ok
 
-4.calculate profits: ?
+#4.calculate profits: ? >
 				totalMoney
 				percentGain
 				gainMoney
 
 
-x-Coin API Key: 
-4CE9466E-9DA5-48FD-AD89-2283B9A67815
+x-Coin API Key: >
+4CE9466E-9DA5-48FD-AD89-2283B9A67815  >
 B1DE5D07-9B49-4760-9418-F80F523E94EE
