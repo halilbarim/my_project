@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+ 
+  <title>Document</title>
+  
+  
+
+</head>
+
+
+
+<body style="background-color: whitesmoke;">
+  
+  <nav class="navbar navbar-expand-sm bg-warning navbar-dark">
+    <marquee behavior="scrolling">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <h6 class="nav-link" >BTC</h6>
+        </li>
+        <li class="nav-item active">
+          <h6 class="nav-link">ETH</h6>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#">COTI</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">XRP</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">BNB</a>
+        </li>
+      </ul>
+    </marquee>
+    
+  </nav>  
+  <div class="row" style="padding-top: 20px;">
+    <div class="col-sm-6">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="input-group-text" onclick="satinal();" >Coin Al</button>
+        </div>
+        <input id="coinAl" class="form-control" type="text"  title="coin türü boşluk miktar giriniz">
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="input-group-text" onclick="satisyap();" >Coin Sat</button>
+        </div>
+        <input id="coinSat" class="form-control" type="text"  title="coin türü boşluk miktar giriniz">
+      </div>
+    </div>
+  </div>
+ 
+  <div class="container-fluid" style="width: 100%; background-color:white;">
+    <h4>İşlemler</h4>
+    <p>Geçmişte yaptığınız işlemlerin listesi aşağıdadır</p>            
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>İşlem Türü</th>
+          <th>Cinsi</th>
+          <th>Miktar</th>
+          <th>İşlem Kuru</th>
+          <th>Maliyet</th>
+          <th>Kar Durumu</th>
+        </tr>
+      </thead>
+
+      <tbody  id='history'>
+        <tr>
+          <td>Alış</td>
+          <td>BTC</td>
+          <td>0.005000</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>Mary</td>
+          <td>Moe</td>
+          <td>mary@example.com</td>
+        </tr>
+        <tr>
+          <td>July</td>
+          <td>Dooley</td>
+          <td>july@example.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="container-fluid" style="width: 100%; background-color:white;">
+    <h4>Hesap Özetiniz</h4>          
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Birim Adı</th>
+          <th>Miktar</th>
+          <th>Kar</th>
+        </tr>
+      </thead>
+
+      <tbody  id='account'>
+        <tr>
+          <td>Alış</td>
+          <td>BTC</td>
+          <td>0.005000</td>
+        
+        </tr>
+        <tr>
+          <td>Mary</td>
+          <td>Moe</td>
+          <td>mary@example.com</td>
+        </tr>
+        <tr>
+          <td>July</td>
+          <td>Dooley</td>
+          <td>july@example.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </br>
+    <div class="progress" id="accountUSD">
+      <div class="progress-bar bg-success" style="width:50%" id="baseUsd" >
+        Bakiye
+      </div>
+      <div class="progress-bar" style="width:10%" id="plusUsd">
+        KAR
+      </div>
+    </div>
+    <div id="test">test</div>
+    <button onclick="accountBar('BTC',1000,0,'new');">yeni</button>
+     <button onclick="accountBar('BTC',250,0,'up');">güncelle</button>
+     <button onclick="accountBar('ETH',500,0,'up');">ref</button>
+    <script>
+        
+
+      var baseUrl="https://rest.coinapi.io/v1/exchangerate/BTC/USD";
+      let accountBalance = {
+          'baseUSD':1000,
+          'coins' : [{coinName:'example',coinBalanced:'example'}]
+        }
+        let accountState = [{inCoin: 'EX',inPiece:'ex',rate:'ex',gain:'ex'}];
+        
+      var count=0;
+      
+      function loadData (baseUrl,state,inCoin,inPiece){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET",baseUrl,true);
+        xmlhttp.setRequestHeader("X-CoinAPI-Key" , "B1DE5D07-9B49-4760-9418-F80F523E94EE");
+        xmlhttp.onreadystatechange = function(){
+          if(xmlhttp.readyState ===4 && xmlhttp.status===200){
+            data = JSON.parse(xmlhttp.responseText);
+            //console.log('ok1');
+           
+              if(state=='buy'){
+                //satın al islem
+              
+              
+                      //console.log('ok2');
+                      var result = data ['rate'] * inPiece;  
+                    
+                      var arrayLengt =accountBalance['coins'].length;
+                      
+                      var searchResult = accountBalance['coins'].findIndex(s=> s.coinName == inCoin);
+                      if(searchResult==-1){
+                        accountBalance['coins'].push({ coinName: inCoin, coinBalanced: result });
+                        document.getElementById('history').innerHTML+="<tr><td>Alış</td><td>" + inCoin + "</td><td>" + inPiece + "</td><td>"+data['rate'].toPrecision(8)+ "</td><td>"+result.toPrecision(8)+"</td><td>---</td></tr>";
+                        
+                        console.log('yeni kayıt');
+                        var searchIndex = accountBalance['coins'].findIndex(s=> s.coinName == inCoin);
+                        
+                        console.log('Alınan Coin: ' + inCoin + '\nAlınan Miktar: ' + inPiece + '\nMaliyet: ' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced+'\nUSD Bakiye: '+accountBalance['baseUsd'] );
+                       
+                        accountProcess('buy',inCoin,inPiece,data['rate']);
+
+                      } else if (searchResult>=0){
+                        var searchResult = accountBalance['coins'].find(s=> s.coinName == inCoin);
+                        var searchIndex = accountBalance['coins'].findIndex(s=> s.coinName == inCoin);
+                        //var result = data ['rate']*inPiece; 
+                            
+                            
+                            accountBalance['coins'][searchIndex].coinBalanced += result;
+                            document.getElementById('history').innerHTML+="<tr><td>Alış</td><td>"+ inCoin +"</td><td>"+ inPiece +"</td><td>"+data['rate'].toPrecision(8)+"</td><td>"+result.toPrecision(8)+"</td><td>---</td></tr>";
+                            
+                            console.log('güncelleme');
+                            console.log('Alınan Coin: ' + inCoin + '\nAlınan Miktar: ' + inPiece + '\nMaliyet: ' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced );
+                            accountProcess('up',inCoin,inPiece,data['rate']);
+
+                      }
+                      else { console.log('yeni kayıt oluşturalamadı') }
+                          
+                      
+
+                    
+                      //FİNAL KONTROL
+                      console.log(" mevcut kayıt sayısı " + accountBalance['coins'].length);
+                      console.log(accountBalance);
+              
+
+                      
+
+                
+                
+
+                }
+              else if (state=='sell'){
+                  //satis islem
+           
+                 var searchResult = accountBalance['coins'].find(s=> s.coinName == inCoin);
+                 var searchIndex = accountBalance['coins'].findIndex(s=> s.coinName == inCoin);
+                 var result = data ['rate']*inPiece; 
+                 if(searchResult!=-1){
+                     
+                        accountBalance['coins'][searchIndex].coinBalanced -= result;
+                        document.getElementById('history').innerHTML+="<tr><td>Satış</td><td>"+ inCoin +"</td><td>"+ inPiece +"</td><td>"+data['rate'].toPrecision(8)+"</td><td>"+result.toPrecision(8)+"</td><td>---</td></tr>";
+                      
+                        console.log('satış');
+                        console.log('Satılan Coin: ' + inCoin + '\nSatılan Miktar: ' + inPiece + '\nMaliyet: -' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced );
+                        accountProcess('sell',inCoin,inPiece,data['rate']);
+                      } else { console.log('satış yapılamadı') }
+                          
+                      
+                      
+
+                    
+                      //final kontrol
+                      console.log(" mevcut kayıt sayısı " + accountBalance['coins'].length);
+                      console.log(accountBalance);
+                  
+           }
+           
+          }
+         
+          
+        };
+        
+        xmlhttp.send();
+       
+        
+      }
+      
+     
+
+      function accountProcess(state,inCoin,inPiece,rate,gain) {
+
+            if(state=='buy'){
+                  
+               
+               //satın alım ilk kayıt
+               accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate,'gain': gain});
+                //  console.log("DENEME İLK:"+ JSON.parse([accounState[inCoin])
+                 
+                 for (i=0; i<accountState.length; i++){
+                    console.log(i);
+                 
+                 }
+
+                 Console.log()
+  
+                  
+              if(accountState[1]==undefined){
+               
+               
+              }
+              else {
+                //satın alım güncelleme
+
+                var x = accountState[inCoin]['inPiece']+inPiece;
+                
+                accountState[inCoin]['inPiece']=x;
+                accountState[inCoin]['gain']=gain;
+                accountUpdate('up',inCoin,inPiece,0,0);
+
+
+              }
+            
+              
+
+
+
+            }
+            else if (state=='sell'){
+                //satış güncelleme
+                var x = accountState[inCoin]['inPiece']-inPiece;
+                
+                accountState[inCoin]['inPiece']=x;
+                accountState[inCoin]['gain']=gain;
+                accountUpdate('up',inCoin,inPiece,rate,gain);
+
+              }
+
+
+      }
+      function accountUpdate(state,inCoin,inPiece,rate,gain){
+        if (state=='new'){
+
+          document.getElementById('account').innerHTML+="<tr id=ac'"+inCoin+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
+
+        } else if (state=='up'){
+
+          document.getElementById('account').innerHTML="<tr id=ac'"+inCoin+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
+
+        }
+
+
+      }
+
+     
+      // function accountBar(inCoin,inPiece,inBalance,state,result){
+      //  console.log(inCoin);
+      //  var newDiv = document.getElementById(inCoin);
+      // // var barValue =0;
+      
+      //   var parent = document.getElementById('accountCoins');
+
+      //   if(state=='new'){
+      //     res = getBarValue(result);
+      
+         
+      //     document.getElementById('accountCoins').innerHTML+=('<div id="'+inCoin+'" class="progress"><div class="progress-bar bg-success" style="width:'+res+'%">'+res+'</div></div>');
+      //     accountBalance['barValues'].push({'inC':inCoin,'barValue':res});
+      //     console.log(accountBalance['barValues']);
+      //   }else if(state=='up'){
+      //   //var a =  accountBalance['barValues'].findIndex(s=> s.inC == inCoin);
+      //       //barvalue=accountBalance['barValues'][a].barValue-inPiece*1/10;
+            
+            
+      //       var a = accountBalance['barValues'].findIndex(s=> s.inC == inCoin);
+      //       var bar = accountBalance['barValues'][a].barValue;//24
+      //       var res = getBarValue(result);
+      //       console.log("res: "+res);
+      //       var newBar = bar-res;
+            
+      //       console.log('oldbar: '+ bar);
+      //       bar=newBar;
+
+      //       console.log(" NewBar "+newBar);
+
+           
+            
+      //       document.getElementById(newDiv.id).innerHTML=('<div class="progress-bar bg-success" aria-valuemax="100" aria-valuenow="50" style="width:'+newBar+'%">'+newBar+'</div>');
+            
+            
+
+          
+      //   }else {console.log('basarısız');}
+
+
+        
+
+
+      // }
+      
+      // function getBarValue(req,res){
+
+      //      var myMoney = accountBalance['baseUSD'];
+      //     //var res=result = (result*100)/(accountBalance['baseUSD']);
+      //     var x = req*100;
+      //     var c = x/myMoney;
+          
+      //     console.log("GET BAR VALUE: "+c);
+      //     return c;  
+         
+
+      // }
+      
+      function satinal() {
+
+                  var inVal = document.getElementById('coinAl').value;
+                      console.log(inVal);
+                      inVal = inVal.split(" ");
+                  var inCoin=inVal[0].toString();
+                  var inPiece =inVal[1].toString();
+        
+        
+                  loadData("https://rest.coinapi.io/v1/exchangerate/"+inCoin+"/USD",'buy',inCoin,inPiece);
+        //alert('test')
+
+
+      } 
+
+     
+      console.log('hello')
+      //API script
+    
+      
+      function satisyap(){
+    
+       // alert('satıss')
+        var inVal = document.getElementById('coinSat').value;
+                      console.log(inVal);
+                      inVal = inVal.split(" ");
+                  var inCoin=inVal[0].toString();
+                  var inPiece =inVal[1].toString();
+        
+        
+                  loadData("https://rest.coinapi.io/v1/exchangerate/"+inCoin+"/USD",'sell',inCoin,inPiece);
+    
+    
+      }
+    
+    
+//ACCOUNTBAR GÜNCELLEME METODUNDA HER DEFASINDA YENİDEN PUSH YAPIYOR DÜZELTİLECEK.    
+    </script>
+    
+</body>
+</html>
+
