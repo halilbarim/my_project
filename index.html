@@ -75,24 +75,7 @@
       </thead>
 
       <tbody  id='history'>
-        <tr>
-          <td>Alış</td>
-          <td>BTC</td>
-          <td>0.005000</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-        </tr>
-        <tr>
-          <td>Mary</td>
-          <td>Moe</td>
-          <td>mary@example.com</td>
-        </tr>
-        <tr>
-          <td>July</td>
-          <td>Dooley</td>
-          <td>july@example.com</td>
-        </tr>
+       
       </tbody>
     </table>
   </div>
@@ -108,38 +91,12 @@
       </thead>
 
       <tbody  id='account'>
-        <tr>
-          <td>Alış</td>
-          <td>BTC</td>
-          <td>0.005000</td>
         
-        </tr>
-        <tr>
-          <td>Mary</td>
-          <td>Moe</td>
-          <td>mary@example.com</td>
-        </tr>
-        <tr>
-          <td>July</td>
-          <td>Dooley</td>
-          <td>july@example.com</td>
-        </tr>
       </tbody>
     </table>
   </div>
   </br>
-    <div class="progress" id="accountUSD">
-      <div class="progress-bar bg-success" style="width:50%" id="baseUsd" >
-        Bakiye
-      </div>
-      <div class="progress-bar" style="width:10%" id="plusUsd">
-        KAR
-      </div>
-    </div>
-    <div id="test">test</div>
-    <button onclick="accountBar('BTC',1000,0,'new');">yeni</button>
-     <button onclick="accountBar('BTC',250,0,'up');">güncelle</button>
-     <button onclick="accountBar('ETH',500,0,'up');">ref</button>
+    
     <script>
         
 
@@ -148,14 +105,14 @@
           'baseUSD':1000,
           'coins' : [{coinName:'example',coinBalanced:'example'}]
         }
-        let accountState = [{inCoin: 'EX',inPiece:'ex',rate:'ex',gain:'ex'}];
+        let accountState = [{inCoin: 'EX',inPiece:0,rate:0,gain:0}];
         
       var count=0;
       
       function loadData (baseUrl,state,inCoin,inPiece){
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET",baseUrl,true);
-        xmlhttp.setRequestHeader("X-CoinAPI-Key" , "B1DE5D07-9B49-4760-9418-F80F523E94EE");
+        xmlhttp.setRequestHeader("X-CoinAPI-Key" , "4CE9466E-9DA5-48FD-AD89-2283B9A67815");
         xmlhttp.onreadystatechange = function(){
           if(xmlhttp.readyState ===4 && xmlhttp.status===200){
             data = JSON.parse(xmlhttp.responseText);
@@ -180,7 +137,7 @@
                         
                         console.log('Alınan Coin: ' + inCoin + '\nAlınan Miktar: ' + inPiece + '\nMaliyet: ' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced+'\nUSD Bakiye: '+accountBalance['baseUsd'] );
                        
-                        accountProcess('buy',inCoin,inPiece,data['rate']);
+                        accountProcess('buy',inCoin,parseInt(inPiece),data['rate'],0);
 
                       } else if (searchResult>=0){
                         var searchResult = accountBalance['coins'].find(s=> s.coinName == inCoin);
@@ -193,7 +150,7 @@
                             
                             console.log('güncelleme');
                             console.log('Alınan Coin: ' + inCoin + '\nAlınan Miktar: ' + inPiece + '\nMaliyet: ' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced );
-                            accountProcess('up',inCoin,inPiece,data['rate']);
+                            accountProcess('buy',inCoin,parseInt(inPiece),data['rate'],0);
 
                       }
                       else { console.log('yeni kayıt oluşturalamadı') }
@@ -225,7 +182,7 @@
                       
                         console.log('satış');
                         console.log('Satılan Coin: ' + inCoin + '\nSatılan Miktar: ' + inPiece + '\nMaliyet: -' + result + '\nCoin Bakiye: ' + accountBalance['coins'][searchIndex].coinBalanced );
-                        accountProcess('sell',inCoin,inPiece,data['rate']);
+                        accountProcess('sell',inCoin,inPiece,data['rate'],0);
                       } else { console.log('satış yapılamadı') }
                           
                       
@@ -248,7 +205,12 @@
         
       }
       
-     
+     function getGain(first,last){
+
+       return 100*last/first;
+
+
+     }
 
       function accountProcess(state,inCoin,inPiece,rate,gain) {
 
@@ -256,45 +218,35 @@
                   
                
                //satın alım ilk kayıt
-               accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate,'gain': gain});
-                //  console.log("DENEME İLK:"+ JSON.parse([accounState[inCoin])
-                 
-                 for (i=0; i<accountState.length; i++){
-                    console.log(i);
-                 
-                 }
-
-                 Console.log()
-  
-                  
-              if(accountState[1]==undefined){
-               
-               
-              }
-              else {
-                //satın alım güncelleme
-
-                var x = accountState[inCoin]['inPiece']+inPiece;
-                
-                accountState[inCoin]['inPiece']=x;
-                accountState[inCoin]['gain']=gain;
-                accountUpdate('up',inCoin,inPiece,0,0);
-
-
-              }
-            
               
+             
 
+               var searchResult = accountState.findIndex(s=> s.inCoin == inCoin);
 
+                if(searchResult==-1){
+                  console.log('DATA YENİ')
+                  gain=0;
+                  accountState.push({'inCoin':inCoin,'inPiece':inPiece,'rate':rate,'gain': gain});
+                  accountUpdate('new',inCoin,parseInt(inPiece),rate,0);
 
-            }
-            else if (state=='sell'){
-                //satış güncelleme
-                var x = accountState[inCoin]['inPiece']-inPiece;
-                
-                accountState[inCoin]['inPiece']=x;
-                accountState[inCoin]['gain']=gain;
-                accountUpdate('up',inCoin,inPiece,rate,gain);
+                }else if (searchResult>=0){
+                        console.log('DATA GUNCELLENDİ')
+                        
+                        accountState[searchResult]['inPiece']+=inPiece;
+                        console.log("testtt "+accountState[searchResult]['inPiece']);
+                        accountState[searchResult]['rate']=rate;
+                        accountState[searchResult]['gain']+=gain;
+                        accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
+
+                }
+
+            }else if (state=='sell'){
+
+            var searchResult = accountState.findIndex(s=> s.inCoin == inCoin);
+                //satış güncellem
+                accountState[searchResult]['inPiece']-=inPiece;
+                accountState[searchResult]['gain']=gain;
+                accountUpdate('up',accountState[searchResult]['inCoin'],accountState[searchResult]['inPiece'],accountState[searchResult]['rate'],accountState[searchResult]['gain']);
 
               }
 
@@ -302,12 +254,12 @@
       }
       function accountUpdate(state,inCoin,inPiece,rate,gain){
         if (state=='new'){
-
-          document.getElementById('account').innerHTML+="<tr id=ac'"+inCoin+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
+          var x = "ac"+inCoin;
+          document.getElementById('account').innerHTML+="<tr  id='"+x+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
 
         } else if (state=='up'){
-
-          document.getElementById('account').innerHTML="<tr id=ac'"+inCoin+"'><td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td></tr>";
+          
+          document.getElementById("ac"+inCoin).innerHTML="<td>" + inCoin + "</td><td>" + inPiece + "</td><td>" + gain + "</td>";
 
         }
 
